@@ -4,9 +4,9 @@ Our goal with the Home Listing and Price Explorer project is to make a data driv
 The main goal of the program is to give an intuitive and visually pleasing way to understand data about housing, letting users compare listings and make informed decisions. It will mix the functionality of a typical listing browser with functions, including searching and filtering, with a dashboard component, like displaying charts and averages.
 
 There will be one main role in our system: 
-Program User: can utilize all the functionality talked about, inclideing browse, filter, and sort listings, view property details, and analyze charts. The user will also be able to list favorite listings.
+Program User: can utilize all the functionality talked about, including browse, filter, and sort listings, view property details, and analyze charts. The user will also be able to list favorite listings.
 
-We will use a real etete data set with around 2000 rows to represent a diverse and balanced ced scale that is big enough for realistic analytics but small enough for us to be able to have interactive filtering and fast visualization.
+We will use a real estate data set with around 2000 rows to represent a diverse and balanced scale that is big enough for realistic analytics but small enough for us to be able to have interactive filtering and fast visualization.
 
 # Data Requirements  
 Our program is built around our dataset of home listings. Each record represents one residential property and includes its main descriptive and numerical attributes.
