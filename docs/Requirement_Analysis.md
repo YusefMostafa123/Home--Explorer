@@ -1,15 +1,14 @@
 # OverView  
-Our goal with the Home Listing and Price Explorer project is to make a data driven application that will help users explore and analyze property listings. It is designed to function as a property search tool and a dashboard for visualizing trends. Using our dataset, which reflects real world housing data, users will be able to look up homes, filter results based on things like price, area, number of bedrooms or bathrooms, and location, and see analytics that summarize price distributions of homes.
+Our goal with the Home Listing and Price Explorer project is to make a data driven application that will help users explore and analyze property listings for New York City. It is designed to function as a property search tool and a dashboard for visualizing trends. Our application will combine multiple public data sets so the user can not only see the basic information you would expect to see about a home listing like price, beds, baths, size but also have a deep understanding of the context and the surroundings of the home like nearby crime, school quality, and fire department coverage which will give users a richer understanding of the environment around each home.
 
-The main goal of the program is to give an intuitive and visually pleasing way to understand data about housing, letting users compare listings and make informed decisions. It will mix the functionality of a typical listing browser with functions, including searching and filtering, with a dashboard component, like displaying charts and averages.
+Users will be able to look up homes, filter results based on things like price, area, number of bedrooms or bathrooms, and see analytics that summarize price distributions of homes. The main goal of the program is to give an intuitive and visually pleasing way to understand data about housing, letting users compare listings and make informed decisions. It will mix the functionality of a typical listing browser with functions, including searching and filtering, with a dashboard component, like displaying charts and averages.
 
-There will be one main role in our system: 
-Program User: can utilize all the functionality talked about, including browse, filter, and sort listings, view property details, and analyze charts. The user will also be able to list favorite listings.
-
-We will use a real estate data set with around 2000 rows to represent a diverse and balanced scale that is big enough for realistic analytics but small enough for us to be able to have interactive filtering and fast visualization.
+There will be two main roles in our system: 
+Program User: The buyer can utilize all the functionality talked about to compare homes. The user will also be able to list favorite listings.
+Admin: Is responsible for maintaining the data in the system. Admins can load cleaned datasets into the database, refresh them when new versions are available, and control thresholds for analytics, for example, the ranges we use to check nearby crimes.
 
 # Data Requirements  
-Our program is built around our dataset of home listings. Each record represents one residential property and includes its main descriptive and numerical attributes.
+Our program is built around several integrated tables. The housing table is central and main one, and the other datasets will enrich each listing with neighborhood indicators.
 
 ### Listings  
 for each property we have our dataset contains:  
