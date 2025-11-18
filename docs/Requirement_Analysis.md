@@ -74,13 +74,27 @@ Processes all client requests, queries SQLite, performs joins and calculations (
 Used for development, dataset cleaning, debugging, and version control.
 
 
-# Application Requirements  
+# Application Requirements 
 
-### User:
-
-### Agent
-
-### Computed Behavior
+## Functional Requirements
+* The system must allow users to search home listings by filters such as price range, beds, baths, and property type.
+*  Users must be able to save listings to a personal “Favorites” list
 
 
+## Visual Requirements 
+
+* Provides a smooth, responsive, styled UI with clear sections for search, results, and listing details. 
+* Ensures consistent layout across pages: landing page, search page, results page, listing page, and admin upload page.
+
+
+## Performance Requirements
+* The system should return typical search results within 2–3 seconds.
+* Database queries should be optimized with indexing on frequently used columns
+* The system must support loading datasets up to several hundred rows without crashing or timing out
+
+## Design Goals
+* Keeps the interface simple and informative, prioritizing clarity over complexity.
+* Maintains consistent styling and branding across all pages.
+* Contains a visual landing page as a 'home'.
+* 
 
