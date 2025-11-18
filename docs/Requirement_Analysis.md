@@ -60,10 +60,10 @@ Each borough has one fire coverage score and one demographic row used for dashbo
 
 # Application Requirements 
 
-## Functional Requirements
+## Functional Requirements  
 User:  
-* The system must allow users to search home listings by filters such as price range, beds, baths, and property type.
-* For each home listing, the user will see the Closest school + school score, the Closest hospital + quality label, Nearby crimes within 0.8 miles, the Borough fire safety score, and the Borough age group that the home is located in.
+* The system must allow users to search home listings by filters such as price range, beds, baths, and property type.  
+* For each home listing, the user will see the Closest school + school score, the Closest hospital + quality label, Nearby crimes within 0.8 miles, the Borough fire safety score, and the Borough age group that the home is located in.  
 *  Users must be able to save listings to a personal “Favorites” list.  
 Admin:  
 *Replace cleaned datasets, detect missing coordinates, rebuild SQLite tables.
