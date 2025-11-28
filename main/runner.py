@@ -3,7 +3,11 @@ from flask import Flask, request
 
 # Startup Sequence
 #util.clear_terminal()
-app = Flask("Home Listing and Price Explorer")
+app = Flask(
+    import_name= "Home Listing and Price Explorer",
+    template_folder = f'{util.ROOT}/templates',
+    static_folder = f'{util.ROOT}/static')
+
 app.secret_key = 'CS480'
 app.config['EXPLAIN_TEMPLATE_LOADING'] = ("-d" in sys.argv)
 
