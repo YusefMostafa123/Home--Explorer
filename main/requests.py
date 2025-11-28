@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import db
 
-def process_add_favorite():
+def process_add_favorite(request):
     if "user_id" not in session:
         return redirect(url_for("login"))
 
@@ -17,7 +17,7 @@ def process_add_favorite():
 
     return redirect(url_for("search"))
 
-def process_remove_favorite():
+def process_remove_favorite(request):
     if "user_id" not in session:
         return redirect(url_for("login"))
 

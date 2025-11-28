@@ -11,6 +11,7 @@ CLEANED = ROOT / "data" / "cleaned"
 conn = None
 
 def init_db():
+    util.print_init_db_message()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()

@@ -112,7 +112,7 @@
 
     {% if favorites %}
         {% for home in favorites %}
-            <a href="{{ url_for('listing_detail_fav', home_id=home['ID']) }}"
+            <a href="{{ url_for('favorite_listing', home_id=home['ID']) }}"
                class="text-decoration-none text-dark">
 
                 <div class="card mb-3 shadow-sm hover-shadow"

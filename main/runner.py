@@ -1,14 +1,17 @@
-import db, page_loader, requests
+import db, page_loader, requests, sys, util, time
 from flask import Flask, render_template, request, redirect, url_for, session
 
 # Startup Sequence
+util.clear_terminal()
 app = Flask("Home Listing and Price Explorer")
+app.secret_key = 'CS480'
 
 def run():
-    db.init_db()
-    app.secret_key = "change-this"
-    app.config["EXPLAIN_TEMPLATE_LOADING"] = True
-    app.run(debug=True, port = 5001)
+    util.print_welcome_message()
+    if "-l" in sys.argv:
+        util.print_init_db_message()
+        db.init_db()
+    app.run(debug=("-d" in sys.argv), port = util.PORT)
 
 
 # Page Endpoints
@@ -42,7 +45,7 @@ def favorite_listing(home_id):
 
 @app.route("/logout")
 def logout():
-    return requests.proccess_logout()
+    return requests.process_logout()
 
 @app.route("/admin_home")
 def admin_home():
@@ -67,7 +70,6 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     return requests.process_login(request = request)
-
 
 # Finally, we run the app!
 run()
