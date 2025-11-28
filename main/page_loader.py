@@ -7,7 +7,7 @@ def load_search(request):
 
     q = request.args.get("q", "").strip()
 
-    # Ranges
+    #ranges
     min_price = request.args.get("min_price", "").strip()
     max_price = request.args.get("max_price", "").strip()
     min_beds = request.args.get("min_beds", "").strip()
@@ -38,7 +38,7 @@ def load_search(request):
     school_med_checked = cb_on("school_medium")
     school_high_checked = cb_on("school_high")
 
-    # Base query
+    #base query
     sql = """
         SELECT
             ID,
@@ -60,7 +60,7 @@ def load_search(request):
         conditions.append("UPPER(FORMATTED_ADDRESS) LIKE '%' || UPPER(?) || '%'")
         params.append(q)
 
-    # Ranges
+    #ranges
     def add_range(field, value, op):
         try:
             if value:
@@ -78,7 +78,7 @@ def load_search(request):
     add_range("PROPERTYSQFT", min_sqft, ">=")
     add_range("PROPERTYSQFT", max_sqft, "<=")
 
-    # Crime severity filter
+    #crime severity filter
     crime_labels = []
     if crime_low_checked: crime_labels.append("Low")
     if crime_med_checked: crime_labels.append("Medium")
@@ -89,7 +89,7 @@ def load_search(request):
         conditions.append(f"COALESCE(crime_severity, 'Medium') IN ({placeholders})")
         params.extend(crime_labels)
 
-    # School band filter
+    #school band filter
     school_labels = []
     if school_low_checked: school_labels.append("Low")
     if school_med_checked: school_labels.append("Medium")

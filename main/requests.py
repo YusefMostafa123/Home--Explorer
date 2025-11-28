@@ -100,7 +100,7 @@ def process_add_listing(request):
         title = request.form["title"]
         address = request.form["address"]
         ptype = request.form["type"]
-        beds = request.form["beds"]           # FIX: was "status"
+        beds = request.form["beds"]    
         baths = request.form["baths"]
         sqrft = request.form["sqrft"]
         price = request.form["price"]
@@ -111,24 +111,24 @@ def process_add_listing(request):
         conn = db.get()
         cur = conn.cursor()
 
-        # Dup check: address
+        #dup check: address
         cur.execute("SELECT 1 FROM NYHouseDataset WHERE FORMATTED_ADDRESS = ?", (address,))
         if cur.fetchone():
             conn.close()
             return render_template("add_listing.html", error="Property already exists at that address.")
 
-        # Dup check: lat/long
+        #dup check: lat/long
         cur.execute("SELECT 1 FROM NYHouseDataset WHERE LATITUDE = ? AND LONGITUDE = ?", (lat, long))
         if cur.fetchone():
             conn.close()
             return render_template("add_listing.html", error="Property already exists at that Latitude and Longitude.")
 
-        # Next ID (start at 1 if table empty)
+        #next ID (start at 1 if table empty)
         cur.execute("SELECT ID FROM NYHouseDataset ORDER BY ID DESC LIMIT 1")
         row2 = cur.fetchone()
         next_id = (row2["ID"] if row2 else 0) + 1
 
-        # Insert (18 columns -> 18 placeholders)
+        #insert (18 columns -> 18 placeholders)
         cur.execute(
             """
             INSERT INTO NYHouseDataset
@@ -146,5 +146,4 @@ def process_add_listing(request):
         conn.close()
         return redirect(url_for("admin_home"))
 
-    # GET
     return render_template("add_listing.html", user_id=session["user_id"])

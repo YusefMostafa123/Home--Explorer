@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS NYHouseDataset (
     LONGITUDE          REAL,
     COUNTY             TEXT,
 
-    --The extra stuff we are precomputing and adding to the orginal table
+    --the extra stuff we are precomputing and adding to the orginal table
     total_crimes          INTEGER,
     felonies              INTEGER,
     misdemeanors          INTEGER,

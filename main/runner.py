@@ -1,7 +1,7 @@
-import db, page_loader, requests, sys, util, time # type: ignore
+import db, page_loader, requests, sys, util
 from flask import Flask, request
 
-# Startup Sequence
+#startup Sequence
 util.clear_terminal()
 app = Flask(
     import_name= "Home Listing and Price Explorer",
@@ -19,7 +19,7 @@ def run():
     app.run(debug=("-d" in sys.argv), port = util.PORT)
 
 
-# Page Endpoints
+#page endpoints
 @app.route("/search")
 def search():
     return page_loader.load_search(request)
@@ -76,5 +76,5 @@ def register():
 def login():
     return requests.process_login(request = request)
 
-# Finally, we run the app!
+#finally, we run the app
 run()
