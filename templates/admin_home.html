@@ -95,6 +95,15 @@
     box-shadow: 0 8px 25px rgba(93, 134, 108, 0.4);
   }
 
+  .action-card.admin {
+    background: linear-gradient(135deg, #8B9D83 0%, #5D866C 100%);
+    border: none;
+  }
+
+  .action-card.admin:hover {
+    box-shadow: 0 8px 25px rgba(139, 157, 131, 0.4);
+  }
+
   .action-icon {
     width: 60px;
     height: 60px;
@@ -123,7 +132,8 @@
     color: #2d3748;
   }
 
-  .action-card.primary .action-title {
+  .action-card.primary .action-title,
+  .action-card.admin .action-title {
     color: white;
   }
 
@@ -133,7 +143,8 @@
     color: #718096;
   }
 
-  .action-card.primary .action-description {
+  .action-card.primary .action-description,
+  .action-card.admin .action-description {
     color: rgba(255, 255, 255, 0.9);
   }
 
@@ -200,11 +211,14 @@
 
   <div class="actions-container">
     
-    <div class="d-grid gap-3 mt-4 mb-4">
-      <a href="{{ url_for('add_listing') }}" class="btn btn-primary btn-lg">
-        Add Listings
-      </a>
-      
+    <a href="{{ url_for('add_listing') }}" class="action-card admin">
+      <div class="action-icon">➕</div>
+      <div class="action-content">
+        <h3 class="action-title">Add Listings</h3>
+        <p class="action-description">Add new properties to the database</p>
+      </div>
+    </a>
+    
     <a href="{{ url_for('search') }}" class="action-card primary">
       <div class="action-icon">🔍</div>
       <div class="action-content">

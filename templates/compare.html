@@ -1,47 +1,210 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2 class="text-center aesthetic-heading mt-4 mb-4">Comparing Houses</h2>
-<div class="compare-container">
+<style>
+  .compare-page {
+    padding: 2rem 0;
+    animation: fadeIn 0.6s ease-out;
+  }
 
-  {% for h in listings %}
-  <div class="compare-card">
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-    <h4 class="compare-address">
-      {{ h['FORMATTED_ADDRESS'] or "Address N/A" }}
-    </h4>
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
 
-    <div class="compare-field">
-      <span>Price:</span>
-      {% if h['PRICE'] %}
-        ${{ "{:,.0f}".format(h['PRICE']) }}
-      {% else %}
-        N/A
-      {% endif %}
+  .compare-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .compare-card {
+    background: #FDFBF7;
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(230, 216, 195, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .compare-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(93, 134, 108, 0.15);
+    border-color: #5D866C;
+  }
+
+  .compare-address {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #E6D8C3;
+    line-height: 1.4;
+  }
+
+  .compare-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(230, 216, 195, 0.3);
+    font-size: 1rem;
+  }
+
+  .compare-field:last-child {
+    border-bottom: none;
+  }
+
+  .compare-field span:first-child {
+    font-weight: 600;
+    color: #4a5568;
+  }
+
+  .compare-field span:last-child,
+  .compare-field:not(:has(span:last-child)) {
+    font-weight: 600;
+    color: #5D866C;
+  }
+
+  .back-button-container {
+    text-align: center;
+    margin-top: 3rem;
+  }
+
+  .btn-outline-secondary {
+    border: 2px solid #e2e8f0;
+    color: #718096;
+    font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-outline-secondary:hover {
+    border-color: #5D866C;
+    color: #5D866C;
+    background: rgba(93, 134, 108, 0.05);
+    transform: translateX(-5px);
+  }
+
+  .no-data {
+    color: #a0aec0;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .compare-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .compare-card {
+      padding: 1.5rem;
+    }
+
+    .compare-address {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+
+<div class="compare-page container">
+
+  <h2 class="page-title">Comparing Houses</h2>
+
+  <div class="compare-container">
+
+    {% for h in listings %}
+    <div class="compare-card">
+
+      <h4 class="compare-address">
+        🏠 {{ h['FORMATTED_ADDRESS'] or "Address N/A" }}
+      </h4>
+
+      <div class="compare-field">
+        <span>Price:</span>
+        <span>
+          {% if h['PRICE'] %}
+            ${{ "{:,.0f}".format(h['PRICE']) }}
+          {% else %}
+            <span class="no-data">N/A</span>
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="compare-field">
+        <span>SQFT:</span>
+        <span>{{ h['PROPERTYSQFT'] or '<span class="no-data">N/A</span>'|safe }}</span>
+      </div>
+
+      <div class="compare-field">
+        <span>Beds:</span>
+        <span>{{ h['BEDS'] or '<span class="no-data">N/A</span>'|safe }}</span>
+      </div>
+
+      <div class="compare-field">
+        <span>Baths:</span>
+        <span>{{ h['BATH'] or '<span class="no-data">N/A</span>'|safe }}</span>
+      </div>
+
+      <div class="compare-field">
+        <span>Crime Level:</span>
+        <span>{{ h['crime_severity'] or '<span class="no-data">N/A</span>'|safe }}</span>
+      </div>
+
+      <div class="compare-field">
+        <span>School Score:</span>
+        <span>{{ h['school_band'] or '<span class="no-data">N/A</span>'|safe }}</span>
+      </div>
+
     </div>
-
-    <div class="compare-field">
-      <span>SQFT:</span> {{ h['PROPERTYSQFT'] or "N/A" }}
-    </div>
-
-    <div class="compare-field">
-      <span>Beds:</span> {{ h['BEDS'] or "N/A" }}
-    </div>
-
-    <div class="compare-field">
-      <span>Baths:</span> {{ h['BATH'] or "N/A" }}
-    </div>
-
-    <div class="compare-field">
-      <span>Crime Level:</span> {{ h['crime_severity'] or "N/A" }}
-    </div>
-
-    <div class="compare-field">
-      <span>School Score:</span> {{ h['school_band'] or "N/A" }}
-    </div>
+    {% endfor %}
 
   </div>
-  {% endfor %}
+
+  <div class="back-button-container">
+    <a href="{{ url_for('search') }}" class="btn-outline-secondary">
+      ← Back to Search
+    </a>
+  </div>
 
 </div>
 

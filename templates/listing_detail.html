@@ -3,104 +3,257 @@
 {% block title %}Home Details - Home Listing Explorer{% endblock %}
 
 {% block content %}
-<h2 class="mb-4 text-center">
-  Showing info about:
-  <span class="text-success">
-    {{ house["FORMATTED_ADDRESS"] }}
-  </span>
-</h2>
 
-<div class="row g-4">
+<style>
+  .details-page {
+    padding: 2rem 0;
+    animation: fadeIn 0.6s ease-out;
+  }
 
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm">
-      <div class="card-header text-center fw-bold">
-        Home
-      </div>
-      <div class="card-body">
-        <p><strong>Price:</strong>
-          ${{ "{:,.0f}".format(house["PRICE"]) }}</p>
-        <p><strong>Beds:</strong> {{ house["BEDS"] }}</p>
-        <p><strong>Baths:</strong> {{ house["BATH"] }}</p>
-        <p><strong>Sqft:</strong>
-          {% if house["PROPERTYSQFT"] %}
-            {{ house["PROPERTYSQFT"] }}
-          {% else %}
-            n/a
-          {% endif %}
-        </p>
-        <p><strong>Type:</strong> {{ house["TYPE"] or "n/a" }}</p>
-        <p><strong>County:</strong> {{ house["COUNTY"] }}</p>
-      </div>
-    </div>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-header h2 {
+    font-size: 1.8rem;
+    color: #2d3748;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header .address {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .info-card {
+    background: #FAFDF3;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(230, 216, 195, 0.3);
+    height: 100%;
+    transition: all 0.3s ease;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(93, 134, 108, 0.15);
+    border-color: #5D866C;
+  }
+
+  .card-header-custom {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #E6D8C3;
+  }
+
+  .info-card p {
+    margin-bottom: 1rem;
+    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .info-card p strong {
+    color: #2d3748;
+    font-weight: 600;
+    min-width: 120px;
+    display: inline-block;
+  }
+
+  .info-card hr {
+    border-color: rgba(230, 216, 195, 0.5);
+    margin: 1.5rem 0;
+  }
+
+  .badge {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .badge.bg-danger {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%) !important;
+  }
+
+  .badge.bg-warning {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%) !important;
+    color: white !important;
+  }
+
+  .badge.bg-success {
+    background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%) !important;
+  }
+
+  .btn-outline-secondary {
+    border: 2px solid #e2e8f0;
+    color: #718096;
+    font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-outline-secondary:hover {
+    border-color: #5D866C;
+    color: #5D866C;
+    background: rgba(93, 134, 108, 0.05);
+    transform: translateX(-5px);
+  }
+
+  .no-data {
+    color: #a0aec0;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .page-header .address {
+      font-size: 1.5rem;
+    }
+
+    .info-card {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header-custom {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+
+<div class="details-page">
+  
+  <div class="page-header">
+    <h2>Showing info about:</h2>
+    <div class="address">{{ house["FORMATTED_ADDRESS"] }}</div>
   </div>
 
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm">
-      <div class="card-header text-center fw-bold">
-        Crime (within 0.6 miles)
-      </div>
-      <div class="card-body">
-        <p><strong>Total arrests:</strong> {{ crime.total_crimes }}</p>
-        <p><strong>Felonies:</strong> {{ crime.felonies }}
-          ({{ "%.1f"|format(crime.felony_rate * 100) }}%)</p>
-        <p><strong>Misdemeanors:</strong> {{ crime.misdemeanors }}
-          ({{ "%.1f"|format(crime.misdemeanor_rate * 100) }}%)</p>
+  <div class="row g-4 mb-4">
 
-        <hr>
-
-        <p class="mb-1"><strong>Crime severity:</strong></p>
-        <span class="badge {{ crime.badge_class }} px-3 py-2"
-              style="font-size: 1.1rem;">
-          {{ crime.severity_label }}
-        </span>
+    <!-- Home Info Card -->
+    <div class="col-lg-4 col-md-6">
+      <div class="info-card">
+        <div class="card-header-custom">🏠 Home</div>
+        <div class="card-body-custom">
+          <p><strong>Price:</strong> ${{ "{:,.0f}".format(house["PRICE"]) }}</p>
+          <p><strong>Beds:</strong> {{ house["BEDS"] }}</p>
+          <p><strong>Baths:</strong> {{ house["BATH"] }}</p>
+          <p><strong>Sqft:</strong>
+            {% if house["PROPERTYSQFT"] %}
+              {{ house["PROPERTYSQFT"] }}
+            {% else %}
+              <span class="no-data">n/a</span>
+            {% endif %}
+          </p>
+          <p><strong>Type:</strong> {{ house["TYPE"] or '<span class="no-data">n/a</span>'|safe }}</p>
+          <p><strong>County:</strong> {{ house["COUNTY"] }}</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm">
-      <div class="card-header text-center fw-bold">
-        School
-      </div>
-      <div class="card-body">
-        {% if school %}
-          <p><strong>School name:</strong> {{ school.name }}</p>
-          <p><strong>Borough:</strong> {{ school.borough }}</p>
-          <p><strong>Distance:</strong>
-            {% if school.distance_miles is not none %}
-              {{ "%.2f"|format(school.distance_miles) }} miles
-            {% else %}
-              n/a
-            {% endif %}
-          </p>
-          <p><strong>Overall score:</strong>
-            {% if school.overall_score is not none %}
-              {{ "%.1f"|format(school.overall_score) }}
-            {% else %}
-              n/a
-            {% endif %}
-          </p>
+    <!-- Crime Info Card -->
+    <div class="col-lg-4 col-md-6">
+      <div class="info-card">
+        <div class="card-header-custom">🚨 Crime (within 0.6 miles)</div>
+        <div class="card-body-custom">
+          <p><strong>Total arrests:</strong> {{ crime.total_crimes }}</p>
+          <p><strong>Felonies:</strong> {{ crime.felonies }}
+            ({{ "%.1f"|format(crime.felony_rate * 100) }}%)</p>
+          <p><strong>Misdemeanors:</strong> {{ crime.misdemeanors }}
+            ({{ "%.1f"|format(crime.misdemeanor_rate * 100) }}%)</p>
 
           <hr>
 
-          <p class="mb-1"><strong>Performance:</strong></p>
-          <span class="badge {{ school.badge_class }} px-3 py-2"
-                style="font-size: 1.1rem;">
-            {{ school.performance_band }}
+          <p class="mb-2"><strong>Crime severity:</strong></p>
+          <span class="badge {{ crime.badge_class }}">
+            {{ crime.severity_label }}
           </span>
-        {% else %}
-          <p class="text-muted">No nearby school found.</p>
-        {% endif %}
+        </div>
       </div>
     </div>
+
+    <!-- School Info Card -->
+    <div class="col-lg-4 col-md-12">
+      <div class="info-card">
+        <div class="card-header-custom">🎓 School</div>
+        <div class="card-body-custom">
+          {% if school %}
+            <p><strong>School name:</strong> {{ school.name }}</p>
+            <p><strong>Borough:</strong> {{ school.borough }}</p>
+            <p><strong>Distance:</strong>
+              {% if school.distance_miles is not none %}
+                {{ "%.2f"|format(school.distance_miles) }} miles
+              {% else %}
+                <span class="no-data">n/a</span>
+              {% endif %}
+            </p>
+            <p><strong>Overall score:</strong>
+              {% if school.overall_score is not none %}
+                {{ "%.1f"|format(school.overall_score) }}
+              {% else %}
+                <span class="no-data">n/a</span>
+              {% endif %}
+            </p>
+
+            <hr>
+
+            <p class="mb-2"><strong>Performance:</strong></p>
+            <span class="badge {{ school.badge_class }}">
+              {{ school.performance_band }}
+            </span>
+          {% else %}
+            <p class="no-data">No nearby school found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mt-4">
+    <a href="{{ url_for('search') }}" class="btn btn-outline-secondary">
+      ← Back to search
+    </a>
   </div>
 
 </div>
 
-<div class="mt-4">
-  <a href="{{ url_for('search') }}" class="btn btn-outline-secondary">
-    ← Back to search
-  </a>
-</div>
 {% endblock %}
