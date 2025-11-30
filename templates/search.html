@@ -4,6 +4,11 @@
 
 {% block content %}
 
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
 <style>
   .search-page {
     padding: 2rem 0;
@@ -101,7 +106,7 @@
   .dropdown-menu .form-control {
     border-radius: 8px;
     border: 2px solid #f0eae2;
-    background: #F5EEDC;
+    background: white;
     padding: 0.6rem 0.8rem;
     font-size: 0.9rem;
   }
@@ -178,6 +183,47 @@
     cursor: not-allowed;
   }
 
+  /* Map and Listings Container */
+  .content-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .listings-column {
+    flex: 1;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 1rem;
+  }
+
+  .listings-column::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .listings-column::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .listings-column::-webkit-scrollbar-thumb {
+    background: #5D866C;
+    border-radius: 10px;
+  }
+
+  .map-column {
+    flex: 1;
+    position: sticky;
+    top: 2rem;
+  }
+
+  #map {
+    height: 80vh;
+    border-radius: 20px;
+    border: 2px solid rgba(230, 216, 195, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
   .listing-card {
     background: #FDFBF7;
     border-radius: 16px;
@@ -203,6 +249,11 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(93, 134, 108, 0.15);
     border-color: #5D866C;
+  }
+
+  .listing-card.highlighted {
+    border-color: #5D866C;
+    box-shadow: 0 8px 25px rgba(93, 134, 108, 0.25);
   }
 
   .listing-icon {
@@ -271,6 +322,74 @@
     margin: 2rem 0;
   }
 
+  /* Custom Leaflet Popup Styling */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .leaflet-popup-content {
+    margin: 1rem;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .popup-address {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+  }
+
+  .popup-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #5D866C;
+    margin-bottom: 0.5rem;
+  }
+
+  .popup-details {
+    color: #718096;
+    font-size: 0.9rem;
+  }
+
+  .popup-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .popup-link:hover {
+    background: linear-gradient(135deg, #4A7057 0%, #3A5A47 100%);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 1024px) {
+    .content-container {
+      flex-direction: column-reverse;
+    }
+
+    .map-column {
+      position: relative;
+      top: 0;
+    }
+
+    #map {
+      height: 500px;
+    }
+
+    .listings-column {
+      max-height: none;
+    }
+  }
+
   @media (max-width: 768px) {
     .page-title {
       font-size: 2rem;
@@ -286,6 +405,10 @@
 
     .listing-price {
       font-size: 1.2rem;
+    }
+
+    #map {
+      height: 400px;
     }
   }
 </style>
@@ -311,9 +434,9 @@
         <div class="col-lg-3 col-md-6">
           <div class="dropdown w-100">
             <button class="filter-dropdown-btn w-100 dropdown-toggle" type="button"
-        id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-  Filters
-</button>
+                    id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Filters
+            </button>
 
             <div class="dropdown-menu" aria-labelledby="filterDropdown" style="min-width: 320px;">
 
@@ -401,7 +524,7 @@
           </div>
         </div>
 
-        <!-- Sort Dropdown -->
+        
         <div class="col-lg-2 col-md-6">
           <select class="form-select" id="sort" name="sort">
             <option value="price_asc" {% if sort=='price_asc' %}selected{% endif %}>Price ⬆</option>
@@ -440,55 +563,62 @@
   <hr>
 
   {% if results and results|length > 0 %}
-    <div class="listings-container">
+    <div class="content-container">
+      
+      
+      <div class="listings-column">
+        {% for h in results %}
+          <div class="listing-card" data-listing-id="{{ h['ID'] }}">
+            <div class="d-flex justify-content-between align-items-start">
 
-      {% for h in results %}
-        <div class="listing-card">
-          <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
 
-            <div class="flex-grow-1">
+                <div class="mb-2">
+                  <input type="checkbox" class="form-check-input compare-checkbox me-2 compare-select"
+                         value="{{ h['ID'] }}" id="cmp-{{ h['ID'] }}">
+                  <label class="form-check-label fw-semibold" for="cmp-{{ h['ID'] }}" style="color: #718096;">
+                    Compare
+                  </label>
+                </div>
 
-              <div class="mb-2">
-                <input type="checkbox" class="form-check-input compare-checkbox me-2 compare-select"
-                       value="{{ h['ID'] }}" id="cmp-{{ h['ID'] }}">
-                <label class="form-check-label fw-semibold" for="cmp-{{ h['ID'] }}" style="color: #718096;">
-                  Compare
-                </label>
+                <a href="{{ url_for('listing_by_id', home_id=h['ID']) }}" class="listing-address">
+                  <span class="listing-icon">🏠</span>
+                  <strong>{{ h['FORMATTED_ADDRESS'] }}</strong>
+                </a>
+
+                <div class="listing-details">
+                  {{ h['COUNTY'] }} · {{ h['BEDS'] }} bd · {{ h['BATH'] }} ba ·
+                  {% if h['PROPERTYSQFT'] %}
+                    {{ h['PROPERTYSQFT'] }} sqft
+                  {% else %}
+                    sqft n/a
+                  {% endif %}
+                </div>
+
               </div>
 
-              <a href="{{ url_for('listing_by_id', home_id=h['ID']) }}" class="listing-address">
-                <span class="listing-icon">🏠</span>
-                <strong>{{ h['FORMATTED_ADDRESS'] }}</strong>
-              </a>
+              <div class="text-end">
+                <div class="listing-price">
+                  ${{ "{:,.0f}".format(h['PRICE']) }}
+                </div>
 
-              <div class="listing-details">
-                {{ h['COUNTY'] }} · {{ h['BEDS'] }} bd · {{ h['BATH'] }} ba ·
-                {% if h['PROPERTYSQFT'] %}
-                  {{ h['PROPERTYSQFT'] }} sqft
-                {% else %}
-                  sqft n/a
-                {% endif %}
+                <form method="post" action="{{ url_for('add_favorite') }}" class="mt-3">
+                  <input type="hidden" name="home_id" value="{{ h['ID'] }}">
+                  <button type="submit" class="btn btn-outline-warning">
+                    ⭐ Add to Favorites
+                  </button>
+                </form>
               </div>
 
             </div>
-
-            <div class="text-end">
-              <div class="listing-price">
-                ${{ "{:,.0f}".format(h['PRICE']) }}
-              </div>
-
-              <form method="post" action="{{ url_for('add_favorite') }}" class="mt-3">
-                <input type="hidden" name="home_id" value="{{ h['ID'] }}">
-                <button type="submit" class="btn btn-outline-warning">
-                  ⭐ Add to Favorites
-                </button>
-              </form>
-            </div>
-
           </div>
-        </div>
+        {% endfor %}
+      </div>
 
-      {% endfor %}
+      
+      <div class="map-column">
+        <div id="map"></div>
+      </div>
 
     </div>
 
@@ -501,7 +631,12 @@
 
 </div>
 
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 <script>
+  // Compare functionality
   const compareBtn = document.getElementById("compare-btn");
   let selected = JSON.parse(localStorage.getItem("compareSelected") || "[]");
 
@@ -537,6 +672,96 @@
       window.location.href = "/compare?ids=" + selected.join(",");
     }
   });
+
+  
+  {% if results and results|length > 0 %}
+  const mapData = {{ results_json|safe }};
+  
+  
+  const map = L.map('map').setView([40.7128, -74.0060], 11);
+  
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Create marker cluster group
+  const markers = L.markerClusterGroup({
+    iconCreateFunction: function(cluster) {
+      const count = cluster.getChildCount();
+      return L.divIcon({
+        html: '<div style="background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">' + count + '</div>',
+        className: 'custom-cluster-icon',
+        iconSize: L.point(40, 40)
+      });
+    }
+  });
+
+
+  const greenIcon = L.divIcon({
+    html: '<div style="background: linear-gradient(135deg, #5D866C 0%, #4A7057 100%); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); border: 2px solid white;">🏠</div>',
+    className: 'custom-marker-icon',
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -15]
+  });
+
+
+  const bounds = [];
+  mapData.forEach(property => {
+    const lat = parseFloat(property.LATITUDE);
+    const lon = parseFloat(property.LONGITUDE);
+    
+    if (isNaN(lat) || isNaN(lon)) return;
+
+    bounds.push([lat, lon]);
+
+    const popupContent = `
+      <div class="popup-address">${property.FORMATTED_ADDRESS}</div>
+      <div class="popup-price">$${parseInt(property.PRICE).toLocaleString()}</div>
+      <div class="popup-details">
+        ${property.BEDS} bd · ${property.BATH} ba · ${property.PROPERTYSQFT || 'N/A'} sqft
+      </div>
+      <a href="/listing/${property.ID}" class="popup-link">View Details</a>
+    `;
+
+    const marker = L.marker([lat, lon], { icon: greenIcon })
+      .bindPopup(popupContent);
+    
+    
+    marker.on('mouseover', function() {
+      const card = document.querySelector(`[data-listing-id="${property.ID}"]`);
+      if (card) {
+        card.classList.add('highlighted');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+    
+    marker.on('mouseout', function() {
+      const card = document.querySelector(`[data-listing-id="${property.ID}"]`);
+      if (card) card.classList.remove('highlighted');
+    });
+
+    markers.addLayer(marker);
+  });
+
+  map.addLayer(markers);
+
+  
+  if (bounds.length > 0) {
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }
+
+  
+  document.querySelectorAll('.listing-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      const listingId = this.getAttribute('data-listing-id');
+      
+    });
+  });
+  {% endif %}
+  
 </script>
 
 {% endblock %}

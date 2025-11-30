@@ -1,5 +1,8 @@
 from flask import render_template, redirect, url_for, session
 import db, sqlite3
+import json
+
+
 
 def load_search(request):
     if "user_id" not in session:
@@ -38,6 +41,7 @@ def load_search(request):
     school_med_checked = cb_on("school_medium")
     school_high_checked = cb_on("school_high")
 
+
     #base query
     sql = """
         SELECT
@@ -48,6 +52,8 @@ def load_search(request):
             BATH,
             PROPERTYSQFT,
             COUNTY,
+            LATITUDE,
+            LONGITUDE,
             total_crimes,
             crime_severity,
             school_band
@@ -121,10 +127,11 @@ def load_search(request):
     conn.close()
 
     results = [dict(r) for r in rows]
-
+    results_json = json.dumps(results, default=str)
     return render_template(
         "search.html",
         results=results,
+        results_json=results_json,
         search_q=q,
         min_price=min_price, max_price=max_price,
         min_beds=min_beds, max_beds=max_beds,
