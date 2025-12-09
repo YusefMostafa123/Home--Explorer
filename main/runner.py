@@ -77,4 +77,5 @@ def login():
     return requests.process_login(request = request)
 
 #finally, we run the app
-run()
+if __name__ == "__main__":
+    run()
