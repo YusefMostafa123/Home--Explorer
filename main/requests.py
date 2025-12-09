@@ -72,6 +72,13 @@ def process_register(request):
         user_id = request.form["user_id"]
         password = request.form["password"]
         status = request.form["status"]
+        admin_code = request.form.get("admin_code")
+
+        if status == "Admin" and admin_code != "5555":
+            return render_template(
+                "register.html",
+                error="Invalid admin security code."
+            )
 
         conn = db.get()
         cur = conn.cursor()
@@ -81,8 +88,10 @@ def process_register(request):
 
         if exists:
             conn.close()
-            return render_template("register.html",
-                                   error="That User ID is already taken.")
+            return render_template(
+                "register.html",
+                error="That User ID is already taken."
+            )
 
         cur.execute("""
             INSERT INTO UserInformation (UserID, Password, Status)

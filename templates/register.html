@@ -265,6 +265,20 @@
         </select>
       </div>
 
+      <div class="mb-3" id="admin-code-group" style="display: none;">
+        <label for="admin_code" class="form-label">Admin Security Code</label>
+        <input
+          type="password"
+          name="admin_code"
+          id="admin_code"
+          class="form-control"
+          placeholder="Enter admin code"
+        >
+        <small style="display:block; margin-top:0.25rem; color:#718096; font-size:0.85rem;">
+          Only required when creating an admin account.
+        </small>
+      </div>
+
       <button type="submit" class="btn btn-primary w-100">
         Create Account
       </button>
@@ -276,5 +290,25 @@
   </div>
 
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const statusSelect = document.getElementById("status");
+    const adminCodeGroup = document.getElementById("admin-code-group");
+
+    if (!statusSelect || !adminCodeGroup) return;
+
+    function toggleAdminCode() {
+      if (statusSelect.value === "Admin") {
+        adminCodeGroup.style.display = "block";
+      } else {
+        adminCodeGroup.style.display = "none";
+      }
+    }
+
+    toggleAdminCode();
+    statusSelect.addEventListener("change", toggleAdminCode);
+  });
+</script>
 
 {% endblock %}
